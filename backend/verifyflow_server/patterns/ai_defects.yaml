@@ -1,0 +1,66 @@
+# AI 缺陷模式库 — YAML 定义
+
+# 幻觉 API 模式
+hallucinated_api:
+  patterns:
+    - id: hallucinated-api-openai
+      name: "假想 OpenAI API 方法"
+      description: "调用了不存在的 OpenAI SDK 方法"
+      signatures:
+        - "openai.ChatCompletion.acreate"  # 旧版/不存在
+        - "openai.Completion.acreate"       # 旧版/不存在
+      correct_api: "openai.chat.completions.create"
+      severity: P0
+
+    - id: hallucinated-api-pandas
+      name: "假想 Pandas DataFrame 方法"
+      description: "调用了不存在的 pandas 方法"
+      signatures:
+        - "df.append"  # 已弃用
+        - "df.sort"    # 不存在
+      severity: P1
+
+# 缺失错误处理模式
+missing_error_handling:
+  patterns:
+    - id: no-try-except-io
+      name: "I/O 操作无异常处理"
+      description: "文件/网络操作未包裹 try-except"
+      examples:
+        - "open().read() without try"
+        - "requests.get() without timeout or try"
+      severity: P1
+
+    - id: bare-except
+      name: "裸 except 捕获"
+      description: "except: 或 except Exception: 宽泛捕获"
+      severity: P2
+
+# 虚假安全模式
+fake_security:
+  patterns:
+    - id: client-side-auth-only
+      name: "仅客户端权限校验"
+      description: "前端隐藏按钮/菜单作为唯一权限控制"
+      severity: P0
+
+    - id: weak-hash-as-encryption
+      name: "弱哈希/编码当作加密"
+      description: "base64/md5 当作加密使用"
+      signatures:
+        - "base64.b64encode(secret)"  # 不是加密
+        - "hashlib.md5(password)"     # 弱哈希
+      severity: P0
+
+# 过度工程模式
+over_engineering:
+  patterns:
+    - id: unnecessary-abstract-factory
+      name: "不必要的抽象工厂"
+      description: "简单对象创建使用 AbstractFactory 模式"
+      severity: P3
+
+    - id: thin-wrapper-overkill
+      name: "过度包装"
+      description: "简单函数调用被包装成多层类"
+      severity: P3
